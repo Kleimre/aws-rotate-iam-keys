@@ -6,15 +6,19 @@ param (
 $arr = $profiles -split ','
 
 # Schedule the cronjob
+
+
 If (Get-ScheduledTask | Where-Object {$_.TaskName -like "AWS Rotate IAM Keys" }) {
     Write-Host "Cronjob already installed."
 } Else {
     $folder = Split-Path $MyInvocation.MyCommand.Path -Parent
-    $hour = Get-Random -Maximum 6 -Minimum 2
-    $minute = Get-Random -Maximum 60
+	$Task = "AWS Rotate IAM Keys"
+	$Trigger= New-ScheduledTaskTrigger -Daily -At 6am # Specify the trigger settings
+	$Action= New-ScheduledTaskAction -Execute "PowerShell.exe" -Argument "-ExecutionPolicy Bypass -WindowStyle Hidden -nologo -noninteractive  `"$folder\aws-rotate-iam-keys.ps1`" -profile default" # Specify what program to run and with its parameters
+	$Setting = New-ScheduledTaskSettingsSet -StartWhenAvailable -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries  -RunOnlyIfNetworkAvailable
+	
+	Register-ScheduledTask -TaskName $Task -Trigger $Trigger  -Settings $Setting -Action $Action
 
-    $createTask = "schtasks /create /f /tn `"AWS Rotate IAM Keys`" /tr `"Powershell.exe -ExecutionPolicy Bypass -WindowStyle Hidden -nologo -noninteractive '$folder\aws-rotate-iam-keys.ps1' -profile default`" /sc daily /st 0$($hour):$minute"
-    Invoke-Expression $createTask
 }
 
 <#
