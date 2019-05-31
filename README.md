@@ -73,7 +73,10 @@ rotation. See [Configuration](#configuration).
 
 ### Windows
 
-[Click here](https://aws-rotate-iam-keys.com/aws-rotate-iam-keys.ps1) to
+Run script:
+powershell.exe  -ExecutionPolicy Bypass .\aws-rotate-iam-keys.ps1
+
+[Click here](https://github.com/Kleimre/aws-rotate-iam-keys/blob/master/Windows/aws-rotate-iam-keys.ps1) to
 download the executable PowerShell script.
 
 Simply place this in any directory and then run it. It will install the
